@@ -2,6 +2,7 @@ from . import repo
 from .container import Container
 import re
 import subprocess
+from subprocess import PIPE
 
 class RedhatContainer(repo.ContainerDistro):
     def __init__(self, image):
@@ -13,11 +14,7 @@ class RedhatContainer(repo.ContainerDistro):
         # cmd_out = c.run_cmd("repoquery --show-duplicates kernel-devel")
 
         cmd = ['repoquery', '--show-duplicates', 'kernel-devel']
-        process = subprocess.run(
-            cmd,
-            capture_output=True,
-            check=True
-        )
+        process = subprocess.run(cmd, stdout=PIPE, stderr=PIPE)
         cmd_out = process.stdout.decode('utf-8')
 
         for log_line in cmd_out:
