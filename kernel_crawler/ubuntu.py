@@ -3,6 +3,8 @@ from . import repo
 from .debian import fixup_deb_arch
 import re
 
+import sys
+
 class UbuntuMirror(repo.Distro):
     def __init__(self, arch):
         arch = fixup_deb_arch(arch)
@@ -16,7 +18,17 @@ class UbuntuMirror(repo.Distro):
     def to_driverkit_config(self, release, deps):
         dk_configs = {}
         krel, kver = release.split("/")
+
+        # check for lowlatency
         for dep in deps:
+            if 'lowlatency' in dep:
+                if krel == '5.4.0-122' and kver == '138' and 'lowlatency' in dep:
+                    print(deps)
+                    print(repo.DriverKitConfig(release, target, headers, kver))
+                    sys.exit(1)
+
+        for dep in deps:
+
             if 'headers' in dep:
 
                 # set a default flavor
@@ -31,6 +43,8 @@ class UbuntuMirror(repo.Distro):
 
                 target = 'ubuntu'  # driverkit just uses 'ubuntu'
                 release = f'{krel}-{flavor}'  # add flavor to release
+
+
 
                 val = dk_configs.get(target)
                 if val is None:

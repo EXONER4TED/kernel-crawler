@@ -81,6 +81,13 @@ class DebRepository(repo.Repository):
 
     @classmethod
     def is_kernel_package(cls, dep):
+        check = (cls.KERNEL_PACKAGE_PATTERN.search(dep) and
+                not dep.endswith('-dbg') and
+                'modules-extra' not in dep and
+                'linux-source' not in dep and
+                'tools' not in dep) or 'linux-kbuild' in dep
+
+        # print(dep, check)
         return (cls.KERNEL_PACKAGE_PATTERN.search(dep) and
                 not dep.endswith('-dbg') and
                 'modules-extra' not in dep and
@@ -99,6 +106,10 @@ class DebRepository(repo.Repository):
             dependencies = {pkg_name}
         pkg_deps = cls.filter_kernel_packages(packages[pkg_name]['Depends'])
         for dep in pkg_deps:
+            if 'linux-headers' in dep and 'lowlatency' in dep:
+                print(pkg_deps)
+                print(dep)
+                sys.exit(1)
             dep = dep.split(None, 1)[0]
             # Note: this always takes the first branch of alternative
             # dependencies like 'foo|bar'. In the kernel crawler, we don't care
@@ -209,6 +220,7 @@ class DebRepository(repo.Repository):
                     pass
 
         logger.debug("before pruning, deps=\n{}".format(pp.pformat(deps)))
+        pp.pprint(deps)
         for pkg, dep_list in list(deps.items()):
             have_headers = False
             for dep in dep_list:
@@ -216,6 +228,7 @@ class DebRepository(repo.Repository):
                     have_headers = True
             if not have_headers:
                 del deps[pkg]
+        pp.pprint(deps)
         logger.debug("after pruning, deps=\n{}".format(pp.pformat(deps)))
         return deps
 
