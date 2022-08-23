@@ -51,7 +51,7 @@ class DistroImageValidation(click.Option):
 @click.option('--version', required=False, default='')
 @click.option('--arch', required=False, type=click.Choice(['x86_64', 'aarch64'], case_sensitive=True), default='x86_64')
 @click.option('--out_fmt', required=False, type=click.Choice(['plain', 'json', 'driverkit'], case_sensitive=True),  default='plain')
-@click.option('--image', cls=DistroImageValidation, required_if_distro=["Redhat"], multiple=True)
+@click.option('--image', required=False, multiple=True)
 def crawl(distro, version='', arch='', out_fmt='', image=''):
     res = crawl_kernels(distro, version, arch, image, out_fmt == 'driverkit')
     out_fmt = str.lower(out_fmt)
