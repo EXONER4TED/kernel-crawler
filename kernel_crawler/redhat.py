@@ -14,12 +14,14 @@ class RedhatContainer(repo.ContainerDistro):
         # cmd_out = c.run_cmd("repoquery --show-duplicates kernel-devel")
 
         cmd = ['repoquery', '--show-duplicates', 'kernel-devel']
-        process = subprocess.run(cmd, stdout=PIPE, stderr=PIPE)
-        print('banana')
-        print(process, flush=True)
+        process = subprocess.run(
+            cmd,
+            capture_output=True,
+            check=False
+        )
 
         cmd_out = process.stdout.decode('utf-8')
-        print(cmd_out)
+        print(cmd_out, flush=True)
 
         for log_line in cmd_out:
             m = re.search("(?<=kernel-devel-0:).*", log_line)
