@@ -16,7 +16,7 @@ class RedhatContainer(repo.ContainerDistro):
         cmd = ['repoquery', '--show-duplicates', 'kernel-devel']
         process = subprocess.run(cmd, stdout=PIPE, stderr=PIPE)
         print('banana')
-        print(process)
+        print(process, flush=True)
 
         cmd_out = process.stdout.decode('utf-8')
         print(cmd_out)
